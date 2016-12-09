@@ -121,4 +121,16 @@ class Region extends ActiveRecord {
 		return $this->save();
 	}
 
+	/**
+	 * Return children
+	 *
+	 * @since 0.0.1
+	 * @return {array}
+	 */
+	public function getChildren() {
+		return static::find()
+			->where(['parent_id' => $this->id])
+			->all();
+	}
+
 }

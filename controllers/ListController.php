@@ -10,6 +10,8 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 use yii\web\NotFoundHttpException;
 
+use yii\region\models\Region;
+
 class ListController extends Controller {
 
 	public $defaultAction = 'children';
@@ -36,12 +38,26 @@ class ListController extends Controller {
 		];
 	}
 
-	public function actionChildren() {
+	public function actionChildren($id = 0) {
+		$item = Region::findOne($id);
+		$done = !!$item;
 
+		return $this->respond([
+			'error' => !$done,
+			'message' => \Yii::t($this->module->messageCategory, $done ? 'operation succeeded' : 'no matched data'),
+			'data' => $done ? $item->children : [],
+		]);
 	}
 
-	public function actionParents() {
+	public function actionParents($id) {
+		$item = Region::findOne($id);
+		$done = !!$item;
 
+		return $this->respond([
+			'error' => !$done,
+			'message' => \Yii::t($this->module->messageCategory, $done ? 'operation succeeded' : 'no matched data'),
+			'data' => $done ? $item->children : [],
+		]);
 	}
 
 }

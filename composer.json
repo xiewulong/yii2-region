@@ -1,0 +1,25 @@
+{
+	"name": "xiewulong/yii2-region",
+	"description": "region",
+	"keywords": ["yii2", "xiewulong", "region"],
+	"type": "yii2-extension",
+	"license": "MIT",
+	"support": {
+		"issues": "https://github.com/xiewulong/yii2-region/issues",
+		"wiki": "https://github.com/xiewulong/yii2-region/wiki",
+		"source": "https://github.com/xiewulong/yii2-region"
+	},
+	"authors": [
+		{
+			"name": "xiewulong",
+			"email": "xiewulong@vip.qq.com"
+		}
+	],
+	"require": {
+		"yiisoft/yii2": "*",
+		"xiewulong/yii2-components": "*"
+	},
+	"autoload": {
+		"psr-4": {"yii\\region\\": ""}
+	}
+}

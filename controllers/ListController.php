@@ -14,7 +14,7 @@ use yii\region\models\Region;
 
 class ListController extends Controller {
 
-	public $defaultAction = 'children';
+	public $defaultAction = 'details';
 
 	public function behaviors() {
 		return [
@@ -50,14 +50,6 @@ class ListController extends Controller {
 	}
 
 	public function actionParents($id) {
-		$item = Region::findOne($id);
-		$done = !!$item;
-
-		return $this->respond([
-			'error' => !$done,
-			'message' => \Yii::t($this->module->messageCategory, $done ? 'operation succeeded' : 'no matched data'),
-			'data' => $done ? $item->children : [],
-		]);
 	}
 
 }

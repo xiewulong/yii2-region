@@ -14,7 +14,7 @@ use yii\region\models\Region;
 
 class ListController extends Controller {
 
-	public $defaultAction = 'details';
+	public $defaultAction = 'children';
 
 	public function behaviors() {
 		return [
@@ -22,7 +22,7 @@ class ListController extends Controller {
 				'class' => AccessControl::className(),
 				'rules' => [
 					[
-						'actions' => ['children', 'parents'],
+						'actions' => ['children'],
 						'allow' => true,
 						'roles' => $this->module->permissions,
 					],
@@ -32,24 +32,31 @@ class ListController extends Controller {
 				'class' => VerbFilter::className(),
 				'actions' => [
 					'children' => ['get'],
-					'parents' => ['get'],
 				],
 			],
 		];
 	}
 
 	public function actionChildren($id = 0) {
-		$item = Region::findOne($id);
-		$done = !!$item;
+		if($id == 0) {
+			$items = Region::find()
+				->select(['id', 'name'])
+				->where(['parent_id' => $id])
+				->all();
+			$done = true;
+		} else {
+			$item = Region::findOne($id);
+			$done = !!$item;
+			$items = $done ? $item->getChildren()
+				->select(['id', 'name'])
+				->all() : [];
+		}
 
 		return $this->respond([
 			'error' => !$done,
 			'message' => \Yii::t($this->module->messageCategory, $done ? 'operation succeeded' : 'no matched data'),
-			'data' => $done ? $item->children : [],
+			'data' => $items,
 		]);
-	}
-
-	public function actionParents($id) {
 	}
 
 }

@@ -122,15 +122,102 @@ class Region extends ActiveRecord {
 	}
 
 	/**
+	 * Returns parent
+	 *
+	 * @since 0.0.1
+	 * @return {object}
+	 */
+	public function getParent() {
+		return $this->hasOne(static::classname(), ['id' => 'parent_id']);
+	}
+
+	/**
 	 * Return children
 	 *
 	 * @since 0.0.1
 	 * @return {array}
 	 */
 	public function getChildren() {
-		return static::find()
-			->where(['parent_id' => $this->id])
-			->all();
+		return $this->hasMany(static::classname(), ['parent_id' => 'id']);
+	}
+
+	/**
+	 * Return parents
+	 *
+	 * @since 0.0.1
+	 * @return {array}
+	 */
+	public function getParents() {
+		$parents = [];
+
+		$item = $this;
+		while($item->parent) {
+			$item = $item->parent;
+			array_unshift($parents, $item);
+		}
+
+		return $parents;
+	}
+
+	/**
+	 * Return linkage list
+	 *
+	 * @since 0.0.1
+	 * @return {array}
+	 */
+	public function getLinkageList($top = 0) {
+		$items = $this->parents;
+		$items[] = $this;
+
+		$list = [];
+		$checking = true;
+		foreach($items as $item) {
+			if($checking) {
+				if($item->parent_id == $top) {
+					$checking = false;
+				} else {
+					continue;
+				}
+			}
+
+			$_list = static::find()
+				->where(['parent_id' => $item->parent_id])
+				->all();
+
+			$list[] = [
+				'active' => $item->id,
+				'items' => $_list,
+			];
+		}
+
+		return $list;
+	}
+
+	/**
+	 * Returns fullname
+	 *
+	 * @since 0.0.1
+	 * @return {string}
+	 */
+	public function getFullname($top = 0, $separator = ' ') {
+		$items = $this->parents;
+		$items[] = $this;
+
+		$names = [];
+		$checking = true;
+		foreach($items as $item) {
+			if($checking) {
+				if($item->parent_id == $top) {
+					$checking = false;
+				} else {
+					continue;
+				}
+			}
+
+			$names[] = $item->name;
+		}
+
+		return implode($separator, $names);
 	}
 
 }
